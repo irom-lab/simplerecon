@@ -74,18 +74,22 @@ def main(opts):
     src_cam_T_world_b44 = np.zeros([1,num_src_imgs,4,4])
     src_world_T_cam_b44 = np.zeros([1,num_src_imgs,4,4])
 
+    ind = 0
+
     for src_img_ind in src_img_inds:
         # Load image
         src_img = read_image_file(data_dir + "/frame-%06d.color.jpg"%(src_img_ind),height=img_height, width=img_width) # Load image
-        src_imgs_b3hw[0,src_img_ind,:,:,:] = src_img
+        src_imgs_b3hw[0,ind,:,:,:] = src_img
 
         # Intrinsics
-        src_K_s1_b44[0,src_img_ind,:,:] = K_tello
+        src_K_s1_b44[0,ind,:,:] = K_tello
 
         # Load pose
         src_pose = np.loadtxt(data_dir + "/frame-%06d.pose.txt"%(src_img_ind)) # Load pose
-        src_cam_T_world_b44[0,src_img_ind,:,:] = src_pose
-        src_world_T_cam_b44[0,src_img_ind,:,:] = np.linalg.inv(src_pose)
+        src_cam_T_world_b44[0,ind,:,:] = src_pose
+        src_world_T_cam_b44[0,ind,:,:] = np.linalg.inv(src_pose)
+
+        ind += 1
 
     # Setup data dictionary for source images as torch tensors
     src_data = {
