@@ -24,7 +24,7 @@ We provide the following models (scores are with online default keyframes):
 
 ## Run simple demo
 
-Run the following (note: most of the arguments are ignored). This will ask you to select the folder with images; navigate to the folder and double click on it; then select "Open".
+Run the following (note: most of the arguments are ignored). This will ask you to select the folder with images; navigate to the folder and double click on it; then select "Open". This assumes you've already run `collect_images_for_fusion.py` from [here](https://github.com/irom-lab/tello-zoedepth). 
 ```
 CUDA_VISIBLE_DEVICES=0 python test_simple.py --name HERO_MODEL --output_base_path OUTPUT_PATH --config_file configs/models/hero_model.yaml --load_weights_from_checkpoint weights/hero_model.ckpt --data_config configs/data/vdr_dense.yaml --num_workers 8 --batch_size 1 --fast_cost_volume --run_fusion --depth_fuser open3d --fuse_color \
 ```
