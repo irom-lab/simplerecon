@@ -8,7 +8,6 @@ Assuming a fresh [Anaconda](https://www.anaconda.com/download/) distribution, yo
 ```shell
 conda env create -f simplerecon_env.yml
 ```
-We ran our experiments with PyTorch 1.10, CUDA 11.3, Python 3.9.7 and Debian GNU/Linux 10.
 
 ## 📦 Models
 
