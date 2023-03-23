@@ -41,6 +41,7 @@ def main(opts):
     # Rescale to compute K_s1_b44
     # TODO: Triple check that this is correct; see load_intrinsics in https://github.com/nianticlabs/simplerecon/blob/3a74095f459dce62579348de51e78493d9ec88eb/datasets/vdr_dataset.py
     # It looks like K_si_b44 is computed by dividing K by 2^i, where i is the scale index
+    #TODO: Double check that there is no other scaling that needs to be applied (e.g., due to change in resolution). I don't think so, but not 100% sure.
     K_tello[:2] /= 2 
 
     # Compute inverse
