@@ -19,7 +19,6 @@ def main(opts):
     ########################################################################################
     # Set up data
 
-    # data_dir = "/home/majumdar/Documents/Research/tello-zoedepth/tello-fusion-images-2023-03-20-19-14-58"
     data_dir = filedialog.askdirectory(title="Double click on directory with images and open")
     print("Chosen directory: ", data_dir)
 
@@ -36,10 +35,18 @@ def main(opts):
     # img_width = cur_img.shape[2]
     cur_img = cur_img[np.newaxis, :, :, :] # Add batch dimension
 
-    # Tello camera intrinsics # TODO: Check that this is K_s1_b44 (and not K_s1_b0, etc., which I think are for different scales)
+    # Tello camera intrinsics
     K_tello = np.array([[929.562627, 0, 487.474037, 0], [0, 928.604856, 363.165223, 0], [0, 0, 1, 0], [0, 0, 0, 1]]) 
+
+    # Rescale to compute K_s1_b44
+    # TODO: Triple check that this is correct; see load_intrinsics in https://github.com/nianticlabs/simplerecon/blob/3a74095f459dce62579348de51e78493d9ec88eb/datasets/vdr_dataset.py
+    # It looks like K_si_b44 is computed by dividing K by 2^i, where i is the scale index
+    K_tello[:2] /= 2 
+
+    # Compute inverse
     cur_invK = np.linalg.inv(K_tello)
 
+    # Add batch dimension
     cur_K = K_tello[np.newaxis, :, :] # Add batch dimension
     cur_invK = cur_invK[np.newaxis, :, :] # Add batch dimension
 
@@ -74,8 +81,7 @@ def main(opts):
     src_cam_T_world_b44 = np.zeros([1,num_src_imgs,4,4])
     src_world_T_cam_b44 = np.zeros([1,num_src_imgs,4,4])
 
-    ind = 0
-
+    ind = 0 # Index for source images
     for src_img_ind in src_img_inds:
         # Load image
         src_img = read_image_file(data_dir + "/frame-%06d.color.jpg"%(src_img_ind),height=img_height, width=img_width) # Load image
@@ -86,7 +92,7 @@ def main(opts):
 
         # Load pose
         src_pose = np.loadtxt(data_dir + "/frame-%06d.pose.txt"%(src_img_ind)) # Load pose
-        src_cam_T_world_b44[0,ind,:,:] = src_pose
+        src_cam_T_world_b44[0,ind,:,:] = src_pose # TODO: Again, double check that this is correct
         src_world_T_cam_b44[0,ind,:,:] = np.linalg.inv(src_pose)
 
         ind += 1
@@ -132,7 +138,7 @@ def main(opts):
 
     ########################################################################################
     # Get depth
-    depth = outputs["depth_pred_s0_b1hw"] # TODO: Make sure this is actually depth we want; there are other outputs too
+    depth = outputs["depth_pred_s0_b1hw"] # TODO: Make sure this is actually depth we want; there are other outputs too. 
 
     # Save depth image
     depth = depth[0,0,:,:].detach().cpu().numpy()
