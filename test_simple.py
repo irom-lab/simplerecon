@@ -1,5 +1,6 @@
 """ 
 Simple script for testing SimpleRecon.
+Takes a directory of images+poses and computes a depth map based on the first 7 images+poses.
 """
 
 import torch
@@ -13,6 +14,7 @@ from PIL import Image
 import numpy as np
 from tkinter import filedialog
 
+import os
 
 def main(opts):
 
@@ -21,6 +23,18 @@ def main(opts):
 
     data_dir = filedialog.askdirectory(title="Double click on directory with images and open")
     print("Chosen directory: ", data_dir)
+    depth_dir = depth_dir = "/".join(data_dir.split("/")[:-1]) + "/depths-from-" + data_dir.split("/")[-1]
+    # Example:
+    # data_dir = "/home/nate/Documents/simplerecon/tello/tello-fusion-images-2023-05-13-12-18-27"
+    # depth_dir = "/home/nate/Documents/simplerecon/tello/depths-from-tello-fusion-images-2023-05-13-12-18-27"
+
+    # if it does not exist, make depth_dir
+    if not os.path.exists(depth_dir):
+        os.makedirs(depth_dir)
+    
+
+
+
 
     # Specify indices for the current and source images
     cur_img_ind = 7 # 8th image as current image
@@ -30,7 +44,7 @@ def main(opts):
     # Current image
     img_height = 384
     img_width = 512
-    cur_img = read_image_file(data_dir + "/frame-%06d.color.jpg"%(cur_img_ind), height=img_height, width=img_width) # Load image
+    cur_img = read_image_file(data_dir + "/frame-%06d.color.jpg"%(cur_img_ind), height=img_height, width=img_width) # Load image (cool zero padding trick)
     # img_height = cur_img.shape[1]
     # img_width = cur_img.shape[2]
     cur_img = cur_img[np.newaxis, :, :, :] # Add batch dimension
@@ -39,9 +53,10 @@ def main(opts):
     K_tello = np.array([[929.562627, 0, 487.474037, 0], [0, 928.604856, 363.165223, 0], [0, 0, 1, 0], [0, 0, 0, 1]]) 
 
     # Rescale to compute K_s1_b44
-    # TODO: Triple check that this is correct; see load_intrinsics in https://github.com/nianticlabs/simplerecon/blob/3a74095f459dce62579348de51e78493d9ec88eb/datasets/vdr_dataset.py
+    # TODO: Triple check that this is correct; see load_intrinsics in https://github.com/nianticlabs/simplerecon/blob/3a74095f459dce62579348de51e78493d9ec88eb/datasets/vdr_dataset.py#L207-L226
     # It looks like K_si_b44 is computed by dividing K by 2^i, where i is the scale index
     #TODO: Double check that there is no other scaling that needs to be applied (e.g., due to change in resolution). I don't think so, but not 100% sure.
+    #NATE: Why are we only calculating K_s1_b44, as opposed to i in range(5)?
     K_tello[:2] /= 2 
 
     # Compute inverse
@@ -148,7 +163,7 @@ def main(opts):
     # depth_PIL.save("./depth.millimeters.frame-%06d.jpg"%(cur_img_ind))
 
     # Save depth as numpy array
-    np.save("./depth.millimeters.frame-%06d.npy"%(cur_img_ind), depth)
+    np.save(depth_dir+"/depth.millimeters.frame-%06d.npy"%(cur_img_ind), depth)
 
     # Print done
     print(" ")

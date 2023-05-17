@@ -38,7 +38,34 @@ depth = np.load("./depth.millimeters.frame-000007.npy")
 plt.imshow(depth); plt.show()
 ```
 
+### Simple Streaming Demo
 
+Instead of taking a single image, this script reads through a folder of images and applies simplerecon by a sliding window. It also uses a TSDF fusion technique to generate pcd and mesh .ply files of the scene.
 
+```
+CUDA_VISIBLE_DEVICES=0 python test_simple_stream.py --name HERO_MODEL \
+            --output_base_path OUTPUT_PATH \
+            --config_file configs/models/hero_model.yaml \
+            --load_weights_from_checkpoint weights/hero_model.ckpt \
+            --data_config configs/data/tello.yaml \
+            --num_workers 8 \
+            --batch_size 1 \
+            --fast_cost_volume \
+            --run_fusion \
+            --depth_fuser open3d \
+            --fuse_color;
+```
 
+### Simple Reconstruction Demo
 
+This demo uses tools from `simplerecon/visualize_live_meshing.py` to generate fpv and birdseye videos.
+It currently has bugs, but generates a video.
+
+```
+CUDA_VISIBLE_DEVICES=0 python3 test_simple_live_stream.py --name HERO_MODEL \
+            --output_base_path OUTPUT_PATH \
+            --config_file configs/models/hero_model.yaml \
+            --load_weights_from_checkpoint weights/hero_model.ckpt \
+            --data_config configs/data/tello.yaml \
+            --num_workers 8;
+```
