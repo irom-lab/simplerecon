@@ -1,6 +1,7 @@
 import os
 
 import matplotlib.pyplot as plt
+import matplotlib as mpl # colormaps
 import moviepy.editor as mpy
 import numpy as np
 import torch
@@ -47,7 +48,7 @@ def colormap_image(
         vmax = valid_vals.max()
 
     cmap = torch.Tensor(
-                            plt.cm.get_cmap(colormap)(
+                            mpl.colormaps.get_cmap(colormap)(
                                                 torch.linspace(0, 1, 256)
                                             )[:, :3]
                         ).to(image_1hw.device)
@@ -75,6 +76,7 @@ def save_viz_video_frames(frame_list, path, fps=30):
     """
     Saves a video file of numpy RGB frames in frame_list.
     """
+    print("frame_list:", frame_list)
     clip = mpy.ImageSequenceClip(frame_list, fps=fps)
     clip.write_videofile(path, verbose=False, logger=None)
 

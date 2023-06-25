@@ -4,6 +4,7 @@ from datasets.scannet_dataset import ScannetDataset
 from datasets.seven_scenes_dataset import SevenScenesDataset
 from datasets.vdr_dataset import VDRDataset
 from datasets.scanniverse_dataset import ScanniverseDataset
+from datasets.generic_mvs_dataset import GenericMVSDataset
 
 def get_dataset(dataset_name, 
                 split_filepath,
@@ -20,6 +21,7 @@ def get_dataset(dataset_name,
                 - scanniverse
                 - colmap: colmap text format.
                 - 7scenes: processed and undistorted seven scenes.
+                - generic_mvs: a generic dataset that can be used for any MVS (added)
         split_filepath: a path to a text file that contains a list of scans that
             will be passed back as a list called scans.
         single_debug_scan_id: if not None will override the split file and will 
@@ -131,6 +133,23 @@ def get_dataset(dataset_name,
         if verbose:
             print(f"".center(80, "#"))
             print(f" 7Scenes Dataset, number of scans: {len(scans)} ".center(80, "#"))
+            print(f"".center(80, "#"))
+            print("")
+
+    elif dataset_name == "generic_mvs":
+
+        with open(split_filepath) as file:
+            scans = file.readlines()
+            scans = [scan.strip() for scan in scans]
+
+        if single_debug_scan_id is not None:
+            scans = [single_debug_scan_id]
+        
+        dataset_class = GenericMVSDataset
+
+        if verbose:
+            print(f"".center(80, "#"))
+            print(f" GenericMVSDataset Dataset, number of scans: {len(scans)} ".center(80, "#"))
             print(f"".center(80, "#"))
             print("")
 

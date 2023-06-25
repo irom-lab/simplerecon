@@ -1,7 +1,7 @@
 """ 
-Simple script for testing SimpleRecon.
 Takes a directory of images+poses and computes a depth map based on overlapping adjacent sets of 7 images+poses.
-Integrates the volume by way of method in https://github.com/irom-lab/tello-zoedepth/blob/main/fuse_tello_images.py
+It then fuses the depth maps into a live video copying the approach from visualize_live_meshing.py
+Videos end up in tello/videos and currently have problems.
 """
 
 import torch

@@ -1,0 +1,9 @@
+!!python/object:options.Options
+dataset_path: /home/nate/Documents/sr_scans/tello/scans/arm
+tuple_info_file_location: data_splits/tello
+dataset_scan_split_file: data_splits/tello/scans.txt
+dataset: generic_mvs
+mv_tuple_file_suffix: _tuples.txt
+num_images_in_tuple: 8
+frame_tuple_type: dense
+split: test

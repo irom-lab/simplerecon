@@ -6,3 +6,6 @@ logs
 models/*.ckpt
 weights/*.ckpt
 **__pycache__**
+OUTPUT_PATH
+tello
+weights
